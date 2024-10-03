@@ -28,7 +28,7 @@ const DashboardLayout: FC<PropsWithChildren> = ({ children }) => {
       "
       >
         <Navbar />
-        {children}
+        <div className="pt-4">{children}</div>
       </div>
     </div>
   );

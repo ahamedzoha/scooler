@@ -2,7 +2,7 @@ import Image from "next/image";
 
 const Navbar = () => {
   return (
-    <div className="w-full flex items-center justify-between p-4">
+    <div className="w-full flex items-center justify-between">
       {/* SEARCH BAR*/}
       <div className="group hidden md:flex items-center gap-2 ring-[1.5px] ring-gray-300 bg-white rounded-full py-1 px-2 text-xs focus-within:ring-purple-400 transition-all">
         <Image
