@@ -25,10 +25,11 @@ const DashboardLayout: FC<PropsWithChildren> = ({ children }) => {
         w-[86%] md:w-[92%] lg:w-[84%] xl:w-[86%]
         bg-[#F7F8FA] p-4
         overflow-scroll
+        flex flex-col
       "
       >
         <Navbar />
-        <div className="pt-4">{children}</div>
+        <div className="pt-4 flex-1">{children}</div>
       </div>
     </div>
   );
