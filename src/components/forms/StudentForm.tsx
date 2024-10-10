@@ -86,6 +86,7 @@ const StudentForm = ({ type, data, onSubmit, className }: StudentFormProps) => {
     try {
       await onSubmit?.(formData);
     } catch (error) {
+      console.error(error);
       setError("root", {
         type: "submit",
         message: "Something went wrong. Please try again.",
@@ -242,8 +243,8 @@ const StudentForm = ({ type, data, onSubmit, className }: StudentFormProps) => {
         {isSubmitting
           ? "Processing..."
           : type === "create"
-          ? "Create Student"
-          : "Update Student"}
+            ? "Create Student"
+            : "Update Student"}
       </button>
     </form>
   );

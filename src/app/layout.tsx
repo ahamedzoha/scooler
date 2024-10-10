@@ -22,7 +22,7 @@ export const metadata: Metadata = {
   title: "School Management System",
   description: "School Management System",
 };
-export const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ["latin"] });
 export default function RootLayout({
   children,
 }: Readonly<{

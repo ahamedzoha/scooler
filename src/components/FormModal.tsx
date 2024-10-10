@@ -32,6 +32,7 @@ type TableType =
 // Define form props type
 type FormProps = {
   type: "create" | "update";
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data?: any;
 };
 
@@ -45,6 +46,7 @@ const forms: Record<string, React.ComponentType<FormProps>> = {
 interface FormModalProps {
   table: TableType;
   type: "create" | "update" | "delete";
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data?: any;
   id?: number;
 }
@@ -55,8 +57,8 @@ const FormModal: React.FC<FormModalProps> = ({ table, type, data, id }) => {
     type === "create"
       ? "bg-lamaYellow"
       : type === "update"
-      ? "bg-lamaSky"
-      : "bg-lamaPurple";
+        ? "bg-lamaSky"
+        : "bg-lamaPurple";
   const [open, setOpen] = useState(false);
 
   const Form = () => {
