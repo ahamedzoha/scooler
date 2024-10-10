@@ -2,9 +2,10 @@ import FormModal from "@/components/FormModal";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
+import { ITEMS_PER_PAGE } from "@/lib/constants/pagination.constant";
 import { role } from "@/lib/data";
 import prisma from "@/lib/prisma";
-import { Class, Subject, Teacher } from "@prisma/client";
+import { Class, Prisma, Subject, Teacher } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
 type TeacherListItem = Teacher & { subjects: Subject[]; classes: Class[] };
@@ -88,20 +89,68 @@ const renderRow = (item: TeacherListItem) => (
     </td>
   </tr>
 );
-const TeachersListPage = async () => {
-  const teachersData = await prisma.teacher.findMany({
-    include: {
-      classes: true,
-      subjects: true,
-    },
-  });
+
+export type TeachersListPageProps = {
+  searchParams?: {
+    [key: string]: string | undefined;
+    page?: string;
+  };
+};
+
+const TeachersListPage = async ({ searchParams }: TeachersListPageProps) => {
+  const { page, ...queryParams } = searchParams || {};
+  const currentPage = parseInt(page || "1", 10);
+
+  const query: Prisma.TeacherWhereInput = {};
+
+  // URL PARAMS CONDITIONS
+  if (queryParams) {
+    for (const [key, value] of Object.entries(queryParams)) {
+      if (value !== undefined) {
+        switch (key) {
+          case "classId": {
+            query.lessons = {
+              some: {
+                classId: value,
+              },
+            };
+            break;
+          }
+          case "search": {
+            query.name = {
+              contains: value,
+              mode: "insensitive",
+            };
+          }
+        }
+      }
+    }
+  }
+
+  const [data, count] = await prisma.$transaction([
+    prisma.teacher.findMany({
+      where: query,
+      include: {
+        classes: true,
+        subjects: true,
+      },
+      take: ITEMS_PER_PAGE,
+      skip: (currentPage - 1) * ITEMS_PER_PAGE,
+    }),
+    prisma.teacher.count({
+      where: query,
+    }),
+  ]);
+
+  console.log(count);
+
   return (
     <div className="bg-white p-4 rounded-md flex-1 m-4 mt-0">
       {/* TOP */}
       <div className="flex items-center justify-between">
         <h1 className="hidden md:block text-lg font-semibold">All Teachers</h1>
         <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
-          <TableSearch />
+          <TableSearch search={queryParams.search} />
           <div className="flex items-center gap-4 self-end">
             <button className="w-8 h-8 flex items-center justify-center rounded-full bg-lamaYellow">
               <Image src="/filter.png" alt="" width={14} height={14} />
@@ -119,9 +168,9 @@ const TeachersListPage = async () => {
         </div>
       </div>
       {/* LIST */}
-      <Table columns={columns} renderRow={renderRow} data={teachersData} />
+      <Table columns={columns} renderRow={renderRow} data={data} />
       {/* PAGINATION */}
-      <Pagination />
+      <Pagination page={currentPage} count={count} />
     </div>
   );
 };
