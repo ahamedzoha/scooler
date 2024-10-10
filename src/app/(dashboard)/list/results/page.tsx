@@ -1,5 +1,5 @@
 import FormModal from "@/components/FormModal";
-import Pagination from "@/components/Pagination";
+// import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
 import { resultsData, role } from "@/lib/data";
@@ -105,7 +105,7 @@ const ResultListPage = () => {
       {/* LIST */}
       <Table columns={columns} renderRow={renderRow} data={resultsData} />
       {/* PAGINATION */}
-      <Pagination />
+      {/* <Pagination /> */}
     </div>
   );
 };

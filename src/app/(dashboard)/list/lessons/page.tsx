@@ -81,10 +81,17 @@ const LessonListPage = async ({ searchParams }: LessonListPageProps) => {
             break;
           }
           case "search": {
-            query.name = {
-              contains: value,
-              mode: "insensitive",
-            };
+            query.OR = [
+              {
+                subject: { name: { contains: value, mode: "insensitive" } },
+              },
+              {
+                class: { name: { contains: value, mode: "insensitive" } },
+              },
+              {
+                teacher: { name: { contains: value, mode: "insensitive" } },
+              },
+            ];
             break;
           }
           default: {
@@ -98,9 +105,9 @@ const LessonListPage = async ({ searchParams }: LessonListPageProps) => {
     prisma.lesson.findMany({
       where: query,
       include: {
-        teacher: true,
-        class: true,
-        subject: true,
+        teacher: { select: { name: true, surname: true } },
+        class: { select: { name: true } },
+        subject: { select: { name: true } },
       },
       take: ITEMS_PER_PAGE,
       skip: (currentPage - 1) * ITEMS_PER_PAGE,

@@ -1,5 +1,5 @@
 import FormModal from "@/components/FormModal";
-import Pagination from "@/components/Pagination";
+// import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
 import { eventsData, role } from "@/lib/data";
@@ -89,7 +89,7 @@ const EventListPage = () => {
       {/* LIST */}
       <Table columns={columns} renderRow={renderRow} data={eventsData} />
       {/* PAGINATION */}
-      <Pagination />
+      {/* <Pagination /> */}
     </div>
   );
 };

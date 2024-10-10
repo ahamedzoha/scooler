@@ -3,9 +3,9 @@ import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
 import { ITEMS_PER_PAGE } from "@/lib/constants/pagination.constant";
-import { examsData, role } from "@/lib/data";
+import { role } from "@/lib/data";
 import prisma from "@/lib/prisma";
-import { Class, Exam, Lesson, Prisma, Subject, Teacher } from "@prisma/client";
+import { Class, Exam, Prisma, Subject, Teacher } from "@prisma/client";
 import Image from "next/image";
 
 const columns = [
@@ -33,7 +33,13 @@ const columns = [
   },
 ];
 
-type ExamListItem = Exam & { lesson: Lesson };
+type ExamListItem = Exam & {
+  lessons: {
+    subject: Subject;
+    class: Class;
+    teacher: Teacher;
+  };
+};
 
 export type ExamListPageProps = {
   searchParams?: {
@@ -48,9 +54,11 @@ const renderRow = (item: ExamListItem) => (
     className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-lamaPurpleLight"
   >
     <td className="flex items-center gap-4 p-4">{item.title}</td>
-    {/* <td>{item.lesson.name}</td> */}
-    {/* <td className="hidden md:table-cell">{item.teacher}</td>
-    <td className="hidden md:table-cell">{item.date}</td> */}
+    <td>{item.lessons?.class?.name}</td>
+    <td className="hidden md:table-cell">
+      {item.lessons?.teacher?.name + " " + item.lessons?.teacher?.surname}
+    </td>
+    <td className="hidden md:table-cell">{item.startTime.toDateString()}</td>
     <td>
       <div className="flex items-center gap-2">
         {role === "admin" ||
@@ -75,13 +83,25 @@ const ExamListPage = async ({ searchParams }: ExamListPageProps) => {
       if (value !== undefined) {
         switch (key) {
           case "teacherId": {
-            query.startTime = value;
+            query.lessons = {
+              teacherId: value,
+            };
+            break;
+          }
+          case "classId": {
+            query.lessons = {
+              classId: value,
+            };
             break;
           }
           case "search": {
-            query.title = {
-              contains: value,
-              mode: "insensitive",
+            query.lessons = {
+              subject: {
+                name: {
+                  contains: value,
+                  mode: "insensitive",
+                },
+              },
             };
             break;
           }
@@ -96,8 +116,13 @@ const ExamListPage = async ({ searchParams }: ExamListPageProps) => {
     prisma.exam.findMany({
       where: query,
       include: {
-        lessons: true,
-        results: true,
+        lessons: {
+          select: {
+            subject: true,
+            class: true,
+            teacher: true,
+          },
+        },
       },
       take: ITEMS_PER_PAGE,
       skip: (currentPage - 1) * ITEMS_PER_PAGE,
@@ -106,16 +131,14 @@ const ExamListPage = async ({ searchParams }: ExamListPageProps) => {
       where: query,
     }),
   ]);
-
-  // PAGINATION
-
+  console.log({ queryParams, query: JSON.stringify(query), data, count });
   return (
     <div className="bg-white p-4 rounded-md flex-1 m-4 mt-0">
       {/* TOP */}
       <div className="flex items-center justify-between">
         <h1 className="hidden md:block text-lg font-semibold">All Exams</h1>
         <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
-          <TableSearch />
+          <TableSearch search={queryParams.search} />
           <div className="flex items-center gap-4 self-end">
             <button className="w-8 h-8 flex items-center justify-center rounded-full bg-lamaYellow">
               <Image src="/filter.png" alt="" width={14} height={14} />

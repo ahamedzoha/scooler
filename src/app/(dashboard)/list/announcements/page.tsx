@@ -1,5 +1,5 @@
 import FormModal from "@/components/FormModal";
-import Pagination from "@/components/Pagination";
+// import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
 import { announcementsData, role } from "@/lib/data";
@@ -83,7 +83,7 @@ const AnnouncementListPage = () => {
       {/* LIST */}
       <Table columns={columns} renderRow={renderRow} data={announcementsData} />
       {/* PAGINATION */}
-      <Pagination />
+      {/* <Pagination /> */}
     </div>
   );
 };
