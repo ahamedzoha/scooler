@@ -121,6 +121,10 @@ const TeachersListPage = async ({ searchParams }: TeachersListPageProps) => {
               contains: value,
               mode: "insensitive",
             };
+            break;
+          }
+          default: {
+            break;
           }
         }
       }
@@ -141,8 +145,6 @@ const TeachersListPage = async ({ searchParams }: TeachersListPageProps) => {
       where: query,
     }),
   ]);
-
-  console.log(count);
 
   return (
     <div className="bg-white p-4 rounded-md flex-1 m-4 mt-0">

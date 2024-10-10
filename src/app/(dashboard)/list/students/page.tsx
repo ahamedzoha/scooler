@@ -5,7 +5,7 @@ import TableSearch from "@/components/TableSearch";
 import { ITEMS_PER_PAGE } from "@/lib/constants/pagination.constant";
 import { role } from "@/lib/data";
 import prisma from "@/lib/prisma";
-import { Class, Grade, Student } from "@prisma/client";
+import { Class, Prisma, Student } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -40,8 +40,14 @@ const columns = [
   },
 ];
 
-type StudentListItem = Student & { classes: Class } & { grades: Grade };
+type StudentListItem = Student & { classes: Class };
 
+type StudentListPageProps = {
+  searchParams?: {
+    [key: string]: string | undefined;
+    page?: string;
+  };
+};
 const renderRow = (item: StudentListItem) => (
   <tr
     key={item.id}
@@ -61,7 +67,7 @@ const renderRow = (item: StudentListItem) => (
       </div>
     </td>
     <td className="hidden md:table-cell">{item.username}</td>
-    <td className="hidden md:table-cell">{item.grades.level}</td>
+    <td className="hidden md:table-cell">{item.classes.name[0]}</td>
     <td className="hidden md:table-cell">{item.phone}</td>
     <td className="hidden md:table-cell">{item.address}</td>
     <td>
@@ -81,26 +87,52 @@ const renderRow = (item: StudentListItem) => (
     </td>
   </tr>
 );
-type StudentListPageProps = {
-  searchParams?: {
-    [key: string]: string | undefined;
-    page?: string;
-  };
-};
 const StudentListPage = async ({ searchParams }: StudentListPageProps) => {
-  const { page } = searchParams || {};
+  const { page, ...queryParams } = searchParams || {};
   const currentPage = parseInt(page || "1", 10);
 
+  const query: Prisma.StudentWhereInput = {};
+
+  if (queryParams) {
+    for (const [key, value] of Object.entries(queryParams)) {
+      if (value !== undefined) {
+        switch (key) {
+          case "teacherId": {
+            query.classes = {
+              lessons: {
+                some: {
+                  teacherId: value,
+                },
+              },
+            };
+            break;
+          }
+          case "search": {
+            query.name = {
+              contains: value,
+              mode: "insensitive",
+            };
+            break;
+          }
+          default: {
+            break;
+          }
+        }
+      }
+    }
+  }
   const [data, count] = await prisma.$transaction([
     prisma.student.findMany({
+      where: query,
       include: {
         classes: true,
-        grades: true,
       },
       take: ITEMS_PER_PAGE,
       skip: (currentPage - 1) * ITEMS_PER_PAGE,
     }),
-    prisma.student.count(),
+    prisma.student.count({
+      where: query,
+    }),
   ]);
   return (
     <div className="bg-white p-4 rounded-md flex-1 m-4 mt-0">
@@ -108,7 +140,7 @@ const StudentListPage = async ({ searchParams }: StudentListPageProps) => {
       <div className="flex items-center justify-between">
         <h1 className="hidden md:block text-lg font-semibold">All Students</h1>
         <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
-          <TableSearch />
+          <TableSearch search={queryParams.search} />
           <div className="flex items-center gap-4 self-end">
             <button className="w-8 h-8 flex items-center justify-center rounded-full bg-lamaYellow">
               <Image src="/filter.png" alt="" width={14} height={14} />
