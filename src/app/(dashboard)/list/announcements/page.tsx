@@ -46,7 +46,11 @@ const AnnouncementListPage = () => {
           {role === "admin" && (
             <>
               <FormModal table="announcement" type="update" data={item} />
-              <FormModal table="announcement" type="delete" id={item.id} />
+              <FormModal
+                table="announcement"
+                type="delete"
+                id={item.id.toString()}
+              />
             </>
           )}
         </div>

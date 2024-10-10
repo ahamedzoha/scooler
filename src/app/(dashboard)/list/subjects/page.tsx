@@ -40,7 +40,11 @@ const SubjectListPage = () => {
           {role === "admin" && (
             <>
               <FormModal table="subject" type="update" data={item} />
-              <FormModal table="subject" type="delete" id={item.id} />
+              <FormModal
+                table="subject"
+                type="delete"
+                id={item.id.toString()}
+              />
             </>
           )}
         </div>

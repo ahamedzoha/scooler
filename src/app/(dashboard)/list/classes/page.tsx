@@ -54,7 +54,7 @@ const ClassListPage = () => {
           {role === "admin" && (
             <>
               <FormModal table="class" type="update" data={item} />
-              <FormModal table="class" type="delete" id={item.id} />
+              <FormModal table="class" type="delete" id={item.id.toString()} />
             </>
           )}
         </div>
