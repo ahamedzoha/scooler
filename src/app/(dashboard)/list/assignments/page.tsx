@@ -109,12 +109,20 @@ const AssignmentListPage = async ({
                       mode: "insensitive",
                     },
                   },
+                },
+              },
+              {
+                lesson: {
                   class: {
                     name: {
                       contains: value,
                       mode: "insensitive",
                     },
                   },
+                },
+              },
+              {
+                lesson: {
                   teacher: {
                     name: {
                       contains: value,
@@ -152,6 +160,8 @@ const AssignmentListPage = async ({
       where: query,
     }),
   ]);
+
+  console.log({ queryParams, query: JSON.stringify(query), data, count });
 
   return (
     <div className="bg-white p-4 rounded-md flex-1 m-4 mt-0">

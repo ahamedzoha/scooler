@@ -34,7 +34,7 @@ const columns = [
 ];
 
 type ExamListItem = Exam & {
-  lessons: {
+  lesson: {
     subject: Subject;
     class: Class;
     teacher: Teacher;
@@ -54,9 +54,9 @@ const renderRow = (item: ExamListItem) => (
     className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-lamaPurpleLight"
   >
     <td className="flex items-center gap-4 p-4">{item.title}</td>
-    <td>{item.lessons?.class?.name}</td>
+    <td>{item.lesson?.class?.name}</td>
     <td className="hidden md:table-cell">
-      {item.lessons?.teacher?.name + " " + item.lessons?.teacher?.surname}
+      {item.lesson?.teacher?.name + " " + item.lesson?.teacher?.surname}
     </td>
     <td className="hidden md:table-cell">{item.startTime.toDateString()}</td>
     <td>
@@ -83,19 +83,19 @@ const ExamListPage = async ({ searchParams }: ExamListPageProps) => {
       if (value !== undefined) {
         switch (key) {
           case "teacherId": {
-            query.lessons = {
+            query.lesson = {
               teacherId: value,
             };
             break;
           }
           case "classId": {
-            query.lessons = {
+            query.lesson = {
               classId: value,
             };
             break;
           }
           case "search": {
-            query.lessons = {
+            query.lesson = {
               subject: {
                 name: {
                   contains: value,
@@ -116,7 +116,7 @@ const ExamListPage = async ({ searchParams }: ExamListPageProps) => {
     prisma.exam.findMany({
       where: query,
       include: {
-        lessons: {
+        lesson: {
           select: {
             subject: true,
             class: true,
@@ -131,7 +131,7 @@ const ExamListPage = async ({ searchParams }: ExamListPageProps) => {
       where: query,
     }),
   ]);
-  console.log({ queryParams, query: JSON.stringify(query), data, count });
+  // console.log({ queryParams, query: JSON.stringify(query), data, count });
   return (
     <div className="bg-white p-4 rounded-md flex-1 m-4 mt-0">
       {/* TOP */}
