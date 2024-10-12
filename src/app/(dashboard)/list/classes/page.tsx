@@ -82,7 +82,7 @@ const ClassListPage = async ({ searchParams }: ClassListPageProps) => {
     for (const [key, value] of Object.entries(queryParams)) {
       if (value !== undefined) {
         switch (key) {
-          case "supevisorId": {
+          case "supervisorId": {
             query.supervisor = {
               id: value,
             };
