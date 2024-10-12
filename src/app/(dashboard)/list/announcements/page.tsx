@@ -3,7 +3,7 @@ import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
 import { ITEMS_PER_PAGE } from "@/lib/constants/pagination.constant";
-import { announcementsData, role } from "@/lib/data";
+import { role } from "@/lib/data";
 import prisma from "@/lib/prisma";
 import { Announcement, Prisma } from "@prisma/client";
 import Image from "next/image";
