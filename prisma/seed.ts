@@ -13,7 +13,7 @@ async function createInBatches<T>(
     const batchResults = await createFn(batch);
     results.push(...batchResults);
     // Optional: Add a small delay between batches to prevent overwhelming the database
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    // await new Promise((resolve) => setTimeout(resolve, 100));
   }
   return results;
 }
